@@ -2,9 +2,9 @@
 #define GRAPHICS_H
 
 #include <SDL2/SDL.h>
+#include "../level/Camera.hpp"
+#include "../util/JMath.hpp"
 #include "Texture.hpp"
-#include "Camera.hpp"
-#include "JMath.hpp"
 
 typedef Uint32 u32;
 class Graphics

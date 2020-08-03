@@ -1,5 +1,5 @@
 #include "Texture.hpp"
-#include "Log.hpp"
+#include "../util/Log.hpp"
 #include <iostream>
 
 Texture::Texture(int width, int height, u32* pixels): width(width), height(height), pixels(pixels)

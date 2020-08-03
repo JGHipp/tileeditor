@@ -1,7 +1,7 @@
 #include "Tilemap.hpp"
-#include "Texture.hpp"
-#include "JMath.hpp"
-#include "Log.hpp"
+#include "../gfx/Texture.hpp"
+#include "../util/JMath.hpp"
+#include "../util/Log.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -15,16 +15,17 @@ Tilemap::Tilemap(int tileSize, const char* textureFile): width(0), height(0), ti
 void Tilemap::init()
 {
 	// Load texture for each tile
-	int nTiles = (tilemapTexture->width / tileSize) * (tilemapTexture->height / tileSize);
-	for(int id = 0; id < nTiles; id++)
+	int nRows = (tilemapTexture->height / tileSize), nCols = (tilemapTexture->width / tileSize);
+	for(int id = 0; id < nRows * nCols; id++)
 	{
-		int tilePosX = id % tileSize;
-		int tilePosY = id / tileSize; 
+		int tilePosX = id % nCols;
+		int tilePosY = id / nCols; 
 		Texture* croppedTile = tilemapTexture->crop(tilePosX * tileSize, tilePosY * tileSize, tileSize, tileSize);
 		// Initialize the tileTextures array assuming all tiles are equal size
-		if(id == 0) tileTextures = (Texture**) malloc(sizeof(*croppedTile) * nTiles);
+		if(id == 0) tileTextures = new Texture*[nRows * nCols];
 		tileTextures[id] = croppedTile;
 	}
+	
 	// Load tilemap data
 	char choice;
 	std::cout << "Create (N)ew tilemap or (L)oad from file?: ";

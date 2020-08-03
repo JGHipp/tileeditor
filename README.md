@@ -1,11 +1,16 @@
 # Bleak Tile Editor
-Written by John Hippisley, July 2020
+Written by John Hippisley, August 2020
 
 Tile Editor for Game development. 
-Run program in the console, dialogues and prompts are outputed there. 
+
+# Usage
+Linux/Mac: <pre> ./build </pre> <br/>
+Windows: <pre> start build.exe </pre><br/>
+<i>Note: </i>All prompts from the program will display in the terminal/command line. <br/>
 
 # Controls
-WASD	- Move the camera<br />
-T		- Toggle tilemap view<br />
-F1		- Export the tilemap<br />
-Ctrl+C	- Quit the editor<br />
+WASD	- Move the camera<br/>
+Mouse	- Click to place the selected tile
+T		- Toggle tilemap view<br/>
+F1		- Export the tilemap<br/>
+Ctrl+C	- Quit the editor<br/>

@@ -1,7 +1,7 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "Rectangle.hpp"
+#include "../util/Rectangle.hpp"
 
 class Entity
 {

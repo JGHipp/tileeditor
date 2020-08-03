@@ -1,8 +1,8 @@
 #ifndef TILEMAP_H
 #define TILEMAP_H
 
-#include "Texture.hpp"
-#include "Graphics.hpp"
+#include "../gfx/Texture.hpp"
+#include "../gfx/Graphics.hpp"
 #include "Camera.hpp"
 #include <vector>
 

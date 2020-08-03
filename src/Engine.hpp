@@ -1,11 +1,12 @@
 #ifndef Engine_H
 #define Engine_H
 
-#include "Graphics.hpp"
-#include "Keyboard.hpp"
-#include "Tilemap.hpp"
-#include "Camera.hpp"
-#include "Mouse.hpp"
+#include "gfx/Graphics.hpp"
+#include "ui/Keyboard.hpp"
+#include "ui/Mouse.hpp"
+#include "level/Tilemap.hpp"
+#include "level/Camera.hpp"
+
 
 class Engine
 {
