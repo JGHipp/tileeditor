@@ -4,9 +4,9 @@ Written by John Hippisley, August 2020
 Tile Editor for Game development. 
 
 ## Usage
-Linux/Mac: <pre> ./build </pre> <br/>
-Windows: <pre> start build.exe </pre><br/>
-<i>Note: </i>All prompts from the program will display in the terminal/command line. <br/>
+Linux/Mac: <pre> ./build </pre>
+Windows: <pre> start build.exe </pre>
+<i>Note: </i>All prompts from the program will display in the terminal/command line.
 
 ## Controls
 <pre>
