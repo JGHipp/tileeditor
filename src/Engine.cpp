@@ -10,7 +10,7 @@
 
 Engine::Engine(double targetFPS): selectMode(false), canToggle(true), selectedTile(1), targetFPS(targetFPS), updates(0)
 {
-	std::cout << "Bleak Editor v1.0" << std::endl;
+	std::cout << "Bleak Editor v1.1" << std::endl;
 }
 
 void Engine::run()
@@ -31,6 +31,27 @@ void Engine::run()
 	std::cout << "Bleak Editor terminated" << std::endl;
 	exit();
 }
+
+int Engine::getMouseX() { return mouse->getX() / graphics->windowScale; }
+int Engine::getMouseY() { return mouse->getY() / graphics->windowScale; }
+int Engine::getMouseTileX() { return (getMouseX() + camera->getX()) / tilemap->tileSize; } 
+int Engine::getMouseTileY() { return  (getMouseY() + camera->getY()) / tilemap->tileSize; }
+
+int nFlooded = 0;
+const int MAX_FLOOD = 2000;
+
+void Engine::floodfill(int x, int y, int fill, int before) 
+{ 
+    if(x >= 0 && y >= 0 && x < tilemap->width && y < tilemap->width && tilemap->getTileId(x, y) == before && nFlooded < MAX_FLOOD) 
+    { 
+    	nFlooded++;
+        tilemap->setTile(x, y, fill); 
+        floodfill(x + 1, y, fill, before); 
+        floodfill(x, y + 1, fill, before); 
+        floodfill(x - 1, y, fill, before); 
+        floodfill(x, y - 1, fill, before); 
+    } 
+} 
 
 void Engine::update()
 {
@@ -68,49 +89,49 @@ void Engine::update()
 		tilemap->exportToFile(path.c_str(), levelName.c_str());
 		std::cout << "Done!" << std::endl;
 	}
-
+	else if(keyboard->keyPressed(SDLK_f))
+	{
+		floodfill(getMouseTileX(), getMouseTileY(), selectedTile, tilemap->getTileId(getMouseTileX(), getMouseTileY()));
+		nFlooded = 0;
+	}
 	if(mouse->isPressed())
 	{
 		const int selectionLine = graphics->renderBuffer->width - tilemap->tilemapTexture->width;
 		int mouseX = mouse->getX() / graphics->windowScale;
 		int mouseY = mouse->getY() / graphics->windowScale;
-		if(mouseX < selectionLine || !selectMode)
-		{
-			int tx = (mouseX + camera->getX()) / tilemap->tileSize;
-			int ty = (mouseY + camera->getY()) / tilemap->tileSize;
-			tilemap->setTile(tx, ty, selectedTile);
-		}
+		if(mouseX < selectionLine || !selectMode) tilemap->setTile(getMouseTileX(), getMouseTileY(), selectedTile);
 		else
 		{
-			int tx = (mouseX - selectionLine) / tilemap->tileSize;
-			int ty = mouseY / tilemap->tileSize;
-			int id = tx + ty * (tilemap->tilemapTexture->width / tilemap->tileSize);
-			if(id < (tilemap->tilemapTexture->width / tilemap->tileSize) * (tilemap->tilemapTexture->height / tilemap->tileSize))
-				selectedTile = id;
+			int tx = (getMouseX() - selectionLine) / tilemap->tileSize, ty = mouseY / tilemap->tileSize;
+			int width = tilemap->tilemapTexture->width / tilemap->tileSize, height = tilemap->tilemapTexture->height / tilemap->tileSize; 
+			int id = tx + ty * width;
+			if(id < width * height) selectedTile = tx + ty * width;
 		}
 	}
 }
 
+const u32 BACKGROUND_COLOR = 0x0D0D0D, LINE_COLOR = 0x00FF08, SELECTION_COLOR = 0xFF0000, MOUSE_TILE_COLOR = 0xFFFFFF;
+
 void Engine::render()
 {
-	const u32 lineColor = 0x00FF08;
-	const u32 backgroundColor = 0x0D0D0D;
 	graphics->clearBuffer();
-	graphics->drawRectangle(0, 0, graphics->renderBuffer->width, graphics->renderBuffer->height, backgroundColor);
+	graphics->drawRectangle(0, 0, graphics->renderBuffer->width, graphics->renderBuffer->height, BACKGROUND_COLOR);
 	tilemap->render(graphics, camera);
-	graphics->drawRectangleOutline(0, 0, tilemap->width * tilemap->tileSize, tilemap->height * tilemap->tileSize, lineColor, camera);
+	graphics->drawRectangleOutline(0, 0, tilemap->width * tilemap->tileSize, tilemap->height * tilemap->tileSize, LINE_COLOR, camera);
+	graphics->drawRectangleOutline(getMouseTileX() * tilemap->tileSize, getMouseTileY() * tilemap->tileSize, 
+		tilemap->tileSize, tilemap->tileSize, MOUSE_TILE_COLOR, camera);
 	if(selectMode)
 	{
 		graphics->drawLine(graphics->renderBuffer->width - tilemap->tilemapTexture->width - 1, 0, 
-			graphics->renderBuffer->width - tilemap->tilemapTexture->width, graphics->renderBuffer->height, lineColor);
+			graphics->renderBuffer->width - tilemap->tilemapTexture->width, graphics->renderBuffer->height, LINE_COLOR);
 		graphics->drawTexture(tilemap->tilemapTexture, graphics->renderBuffer->width - tilemap->tilemapTexture->width, 0);
 		graphics->drawRectangle(graphics->renderBuffer->width - tilemap->tilemapTexture->width, tilemap->tilemapTexture->height, 
 			tilemap->tilemapTexture->width, tilemap->tilemapTexture->height, 0xFF00FF);
 		graphics->drawRectangleOutline(selectedTile % (tilemap->tilemapTexture->width / tilemap->tileSize) * tilemap->tileSize +
 			graphics->renderBuffer->width - tilemap->tilemapTexture->width, selectedTile / (tilemap->tilemapTexture->width / 
-			tilemap->tileSize) * tilemap->tileSize, tilemap->tileSize + 1, tilemap->tileSize + 1, lineColor);		
+			tilemap->tileSize) * tilemap->tileSize, tilemap->tileSize + 1, tilemap->tileSize + 1, SELECTION_COLOR);		
 	}
-	graphics->drawRectangleOutline(0, 0, tilemap->tileSize + 2, tilemap->tileSize + 2, lineColor);
+	graphics->drawRectangleOutline(0, 0, tilemap->tileSize + 2, tilemap->tileSize + 2, SELECTION_COLOR);
 	graphics->drawTexture(tilemap->tileTextures[selectedTile], 1, 1, 0xFF00FF);
 	graphics->updateWindow();
 }

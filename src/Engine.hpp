@@ -7,7 +7,6 @@
 #include "level/Tilemap.hpp"
 #include "level/Camera.hpp"
 
-
 class Engine
 {
 	private:
@@ -23,9 +22,14 @@ class Engine
 		void update();
 		void render();
 		void init();
+		void floodfill(int x, int y, int oldTile, int newTile);
 		long long unsigned int milisecondsSinceEpoch();
 	public:
 		Engine(double targetFPS);
+		int getMouseX();
+		int getMouseY();
+		int getMouseTileX(); 
+		int getMouseTileY();
 		void run();
 		void exit();
 		long long updatesSinceStart();	
